@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+/* *{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body{
+  background: #fff;
+  padding: 0 20px;
+} */
+
+::selection{
+  color: #fff;
+  background: #000;
+}
+
+.wrapper-auto{
+  max-width: 450px;
+  margin: 25px auto;
+}
+
+.wrapper-auto .search-input{
+  background: #fff;
+  width: 100%;
+  border-radius: 5px;
+  position: relative;
+  box-shadow: 0px 1px 5px 3px rgba(0,0,0,0.12);
+}
+
+.search-input input{
+  height: 55px;
+  width: 100%;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0 60px 0 20px;
+  font-size: 18px;
+  box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+}
+
+.search-input.active input{
+  border-radius: 5px 5px 0 0;
+  z-index: 9;
+}
+
+.search-input .autocom-box{
+  padding: 0;
+  opacity: 0;
+  width: 100%;
+  background-color: white;
+  color: #000;
+  pointer-events: none;
+  max-height: 140px;
+  position: absolute;
+  z-index: 9;
+  overflow-y: auto;
+}
+
+.search-input.active .autocom-box{
+  padding: 10px 8px;
+  opacity: 1;
+  z-index: 9;
+  pointer-events: auto;
+}
+
+.autocom-box li{
+  list-style: none;
+  padding: 8px 12px;
+  display: none;
+  width: 100%;
+  z-index: 9;
+  cursor: default;
+  border-radius: 3px;
+  border: none;
+  border-bottom: 1px;
+}
+
+.search-input.active .autocom-box li{
+  display: block;
+}
+.autocom-box li:hover{
+  background: #f2f2f2;
+}
+
+.search-input .icon{
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  height: 55px;
+  width: 55px;
+  text-align: center;
+  line-height: 55px;
+  font-size: 20px;
+  color: #000;
+  cursor: pointer;
+}
+
+.card-horizontal {
+  display: flex;
+  flex: 1 1 auto;
+  height: 100px;
+  border: none; 
+}
+
+.card-body-restaurant {
+  padding: 5px 10px;
+}
+
+.card.suggest {
+  border: none;
+  border-bottom: 5px;
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>
+        <%= title %>
+    </title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="../css/all.min.css">
+
+    <!-- Custome CSS -->
+    <link rel="stylesheet" href="../css/custom.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../Customer/style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,500"
+      rel="stylesheet"
+    />
+    <style>
+        /* .sidebar {  */
+          /* margin-bottom: -5000px; /* any large number will do */
+          /* padding-bottom: 5000px; */
+
+        /* } */
+    </style>
+</head>
+
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">Alimento</a>
+    </nav>
+
+    <!-- Side Bar -->
+    <div class="container-fluid mb-5 " style="margin-top:40px; height: 100vh;">
+        <div class="row">
+            <nav class="col-sm-2 bg-light sidebar py-5 d-print-none overflow-hidden">
+                <div class="sidebar-sticky h-100">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class=<% if(title === "Profile") { %> "active <% } else { %> " <% } %> nav-link"
+                                href="/profile">
+                                <i class="fas fa-user"></i>
+                                Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class=<% if(title === "Cart") { %> "active <% } else { %> " <% } %> nav-link"href="/cart">
+                                <i class="fab fa-accessible-icon"></i>
+                                Cart
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class=<% if(title === "Previous Orders") { %> "active <% } else { %> " <% } %> nav-link"
+                                href="/orders">
+                                <i class="fas fa-align-center"></i>
+                                Previous Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class= <% if(title === "Change Password") { %> "active <% } else { %> " <% } %> nav-link"
+                                href="/changepassword">
+                                <i class="fas fa-key"></i>
+                                Change Password
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>

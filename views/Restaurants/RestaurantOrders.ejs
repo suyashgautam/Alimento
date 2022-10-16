@@ -1,0 +1,206 @@
+<%- include('../partials/restaurantHeader.ejs', {title: "Orders"}) %>
+        <section style="width: 80%;" class="text-center">    
+            <section style="width: 80%;" id = "section-order-confirmation">
+                <div class="container">
+                    <h2 class="text-center">Waiting for your confirmation</h2>
+                    <div class='row dashboard-cards' id = "order-confirmation">
+                    </div>
+                </div>
+            </section>
+
+            <section style="width: 80%;" id = "section-preparing-food">
+                <div class="container">
+                    <h2 class="text-center">Currently preparing food or on its way</h2>
+                    <div class='row dashboard-cards' id = "preparing-food">
+                    </div>
+                </div>
+            </section>
+
+            <section style="width: 80%;" id = "section-completed">
+                <div class="container">
+                    <h2 class="text-center">Completed Orders</h2>
+                    <div class='row dashboard-cards' id = "completed">
+                    </div>
+                </div>
+            </section>
+
+            <section style="width: 80%;" id = "section-canceled">
+                <div class="container">
+                    <h2 class="text-center">Canceled Orders</h2>
+                    <div class='row dashboard-cards' id = "canceled">
+                    </div>
+                </div>
+            </section>
+        </section>
+    <!-- </div>
+</div> -->
+
+<script>
+    const confirmOrder = function (od_id, status) {
+        console.log(od_id, status);
+        fetch('/order/updatestatus?confirm='+status+'&od_id='+od_id,{ method: "POST",
+            headers: {
+                "Content-Type": "application/json",}
+            }).then(response => response.json()).then(response => 
+            {
+                console.log("Hello")
+                if(response.message !== 'Success')
+                {
+                    return alert('Some error occured, Please try again later!');
+                }
+                location.reload();
+            }
+        )
+    }
+    const changeStatus = function(event, od_id){
+        event.preventDefault();
+        const status = event.target.elements.status.value;
+        fetch('/order/updatestatus?od_id='+od_id+'&status='+status,{ method: "POST",
+            headers: {
+                "Content-Type": "application/json",}
+        }).then(response => response.json()).then(response => {
+            if(response.message !== 'Success')
+            {
+                return alert('Some error occured, Please try again later!');
+            }
+            location.reload();
+        })
+    }
+    fetch('/allorders').then(response => response.json()).then(response => {
+        const orderid = new Set();
+        response.forEach(element => {
+            orderid.add(element.o_id);
+        });
+        let orderConfirmation = document.querySelector('#order-confirmation');
+        let preparingFood = document.querySelector('#preparing-food');
+        let completedOrders = document.querySelector('#completed');
+        let canceledOrders = document.querySelector('#canceled');
+        const od_id = Array.from(orderid);
+        od_id.forEach((no_id, index) => {
+            let listele = ``;
+            let cnt = 0;
+            let tcost = 0;
+            let status = '';
+            let odate = '';
+            let c_address = '';
+            orderConfirmation = document.querySelector('#order-confirmation');
+            preparingFood = document.querySelector('#preparing-food');
+            completedOrders = document.querySelector('#completed');
+            canceledOrders = document.querySelector('#canceled');
+            response.forEach(element => {
+                if(element.o_id === no_id)
+                {
+                    const d_name = (element.d_name).replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+                    let orderslist = `<li>
+                                            ${d_name}
+                                            <span>${element.d_quantity} x &#x20b9 ${element.o_payment / element.d_quantity}</span>
+                                        </li>`
+                    listele = listele + orderslist;   
+                    cnt = cnt + 1;
+                    tcost = tcost + element.o_payment;
+                    status = element.o_status;
+                    odate = new Date(element.o_datetime).toLocaleString('en-in');  
+                    c_address = element.c_address;             
+                }
+            })
+            let header = `<div class='card col-md-8 m-auto'>
+                                <div class='card-title'>
+                                    <h2>
+                                        Order ID: ${no_id}
+                                        <small>${c_address} <span style="float: right">${odate}</span></small>
+ 
+                                    </h2>
+                                    <div class='task-count'>
+                                        ${cnt}
+                                    </div>
+                                </div>
+                                <div class='card-flap flap1'>
+                                    <div class='card-description'>
+                                        <ul class='task-list'>`
+            const totalcost = `<li>
+                                            <strong>Total Amount</strong>
+                                            <strong><span>Rs. ${tcost}</span></strong>
+                                        </li>
+                                        ${(status === 'Order Confirmation') ? `<li>
+                                            <strong>Do you want to confirm this order? </strong>
+                                            <span style="height:19px; float: right;">
+                                                <button onclick="confirmOrder('${no_id}', 'Yes')" type="button" class="btn btn-success btn-sm">Yes</button>
+                                                <button onclick="confirmOrder('${no_id}', 'No')" type="button" class="btn btn-danger btn-sm">No</button>
+                                            </span>
+                                        </li>` : (status === 'Preparing food') ? `<li>
+                                            <strong>Change the current status of the order </strong>
+                                            <span style="height:19px; float: right;">
+                                                <form method="POST" onsubmit="return changeStatus(event, '${no_id}')">
+                                                    <select name="status">
+                                                        <option value="On its way">On its way</option>
+                                                        <option value="Delievered">Delievered</option>
+                                                        <option value="Canceled">Cancel</option>
+                                                    </select>
+                                                    <button type="submit">Update</button>
+                                                </form>
+                                                </span>
+                                        </li>` : (status === 'On its way') ? `<li>
+                                            <strong>Change the current status of the order </strong>
+                                            <span style="height:19px; float: right;">
+                                                <form method="POST" onsubmit="return changeStatus(event, '${no_id}')">
+                                                    <select name="status">
+                                                        <option value="Delievered">Delievered</option>
+                                                        <option value="Canceled">Cancel</option>
+                                                    </select>
+                                                    <button type="submit">Update</button>
+                                                </form>
+                                            </span>
+                                        </li>` : ``}
+                                        `;
+            const footer = `</ul>
+                            </div>
+                                <div class='card-flap flap2'>
+                                    <div class='card-actions'>
+                                        <a class='btn' href='#'>Close</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`
+            if(status === 'Order Confirmation')
+            {
+                orderConfirmation.insertAdjacentHTML('beforeend', header + listele + totalcost + footer);
+            } else {
+                if(status === 'Preparing food' || status === 'On its way') {
+                    preparingFood.insertAdjacentHTML('beforeend', header + listele + totalcost + footer);
+                }
+                else {
+                    if(status === 'Delievered') {
+                        completedOrders.insertAdjacentHTML('beforeend', header + listele + totalcost + footer);
+                    }
+                    else
+                    canceledOrders.insertAdjacentHTML('beforeend', header + listele + totalcost + footer);
+                }
+            }
+        })
+        $(document).ready(function () {
+        var zindex = 10;
+        $("div.card-title").click(function (e) {
+            e.preventDefault();
+            var isShowing = false;
+            if ($(this).parent().hasClass("d-card-show")) {
+            isShowing = true;
+            }
+            if ($("div.dashboard-cards").hasClass("showing")) {
+            $("div.card.d-card-show").removeClass("d-card-show");
+            if (isShowing) {
+                $("div.dashboard-cards").removeClass("showing");
+            } else {
+                $(this).parent().css({ zIndex: zindex }).addClass("d-card-show");
+            }
+            zindex++;
+            } else {
+            $("div.dashboard-cards").addClass("showing");
+            $(this).parent().css({ zIndex: zindex }).addClass("d-card-show");
+            zindex++;
+            }
+        });
+    });
+    });
+</script>
+
+<%- include('../partials/restaurantFooter.ejs') %>

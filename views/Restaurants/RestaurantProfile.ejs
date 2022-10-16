@@ -1,0 +1,109 @@
+<%- include('../partials/restaurantHeader.ejs', {title: "Profile"}) %>
+<!-- Load Leaflet CSS from CDN.  More info at: http://leafletjs.com/examples/quick-start.html-->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.css" />
+
+<!-- Load the Leaflet from CDN. More info at: http://leafletjs.com/examples/quick-start.html-->
+<script src="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.js"></script>
+
+ <!-- Load the Esri Leaflet plugin from CDN.  For more info: https://esri.github.io/esri-leaflet/examples/ -->
+<script src="//cdn.jsdelivr.net/leaflet.esri/1.0.0/esri-leaflet.js"></script>
+
+<div class="col-sm-6 mt-5">
+    <form class="mx-5" method="POST" enctype="multipart/form-data" action="/rprofile">
+        <div class="form-group">
+            <img src=<%= user.image %> alt="" height="150" width="150">
+        </div>
+        <div class="form-group">
+            <% if(message == 'Success') { %>
+                <div class="form-group success-alert">
+                    <div class="alert alert-success" role="alert">
+                    User Profile updated !
+                    </div>
+                </div>
+                <% } if(message == 'Failure') { %>
+                <div class="form-group failure-alert">
+                    <div class="alert alert-danger" role="alert">
+                    Some failure happened !
+                    </div>
+                </div>
+            <% } %>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail" class="pl-2 font-weight-bold">Email</label>
+            <input type="email" class="form-control" id="inputEmail" name="remail" value=<%= user.email %> readonly>
+        </div>
+        <div class="form-group">
+            <strong><label for="inputName">Name</label></strong>
+            <input style="text-transform: capitalize" type="text" class="form-control" id="inputName" name="rname" value=<%= user.name %> >
+        </div>
+
+        <div class="form-group">
+            <strong><label for="inputAddress">Address</label></strong>
+            <input type="text" class="form-control" id="inputAddress" name="raddress" value=<%= user.address %> >
+        </div>
+        <div class="form-group">
+            <strong><label for="inputAddress">Add location to the map</label></strong>
+            <button type="button" class="btnGetLoc" id="btnGetLoc">Get Current Location</button>
+            <input type="text" name = "rlatitude" style="display: none;" value="<%= user.latitude %>"></input>
+            <input type="text" name = "rlongitude" style="display: none;" value="<%= user.longitude %>"></input>
+            <div style="height: 300px; width: 300px" id="map"></div>
+        </div>
+
+        <div class="form-group">
+            <i class="fas fa-key"></i><label for="img" class="pl-2 font-weight-bold">Image
+            </label><input type="file" class="form-control" name="rimage">
+        </div>
+        <button type="submit" class="btn btn-danger" name="nameupdate">Update</button>
+    </form>
+</div>
+</div>
+</div>
+<script>
+    const lat = document.querySelector('input[name=rlatitude]')
+    const long = document.querySelector('input[name=rlongitude]');
+    console.log(lat, long);
+    var latvalue = ((lat.value !== '') ? parseFloat(lat.value) : 20.5937);
+    var longvalue = ((long.value !== '') ? parseFloat(long.value) : 78.9629);
+
+    var map = L.map('map').setView([latvalue, longvalue], 10); //35.9886° N, 78.9072° W
+    console.log(latvalue, longvalue);
+    var new_event_marker = new L.marker({lat: latvalue, lon : longvalue},
+    { draggable: true, autoPan: true});
+    new_event_marker.addTo(map)
+    L.esri.basemapLayer('Topographic').addTo(map);
+
+    function onLocationFound(e) {
+        var radius = e.accuracy / 2;
+        lat.value = e.latlng.lat;
+        long.value = e.latlng.long;
+        if(typeof(new_event_marker) === 'undefined')
+        {
+            new_event_marker = new L.marker(e.latlng,{ draggable: true, autoPan: true});
+            new_event_marker.addTo(map)
+        }
+        else
+        {
+            new_event_marker.setLatLng(e.latlng); 
+        }
+    }
+
+    function onLocationError(e) {
+        alert(e.message);
+    }
+    L.DomEvent.on(document.getElementById('btnGetLoc'), 'click', function(){
+        map.on('locationfound', onLocationFound);
+        map.on('locationerror', onLocationError);
+        map.locate({setView: true, maxZoom: 16});
+    })
+
+    new_event_marker.on('dragend', function(event) {
+        var marker = event.target;
+        var position = marker.getLatLng();
+        console.log(position);
+        lat.value = position.lat;
+        long.value = position.lng;
+        console.log(lat, long);
+    })
+
+</script>
+<%- include('../partials/restaurantFooter.ejs') %>

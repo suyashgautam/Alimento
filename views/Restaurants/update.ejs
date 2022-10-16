@@ -1,0 +1,34 @@
+<%- include('../partials/restaurantHeader.ejs', {title: "Update Dish"}) %>
+
+<div class="col-sm-6 mt-5">
+    <form class="mx-5 update-dish" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <img src=<%= results.d_image %> alt="" height="150" width="150">
+        </div>
+        <div class="form-group">
+            <strong><label for="inputdishname">Dish Name</label></strong>
+            <input type="text" name="dname" class="name form-control" id="inputdishname" value='<%= results.d_name %>' required>
+        </div>
+        <div class="form-group">
+            <strong><label for="inputName">Cost</label></strong>
+            <input type="text" class="cost form-control" id="inputCost" name="dcost" value=<%= results.d_cost %> required>
+        </div>
+
+        <div class="form-group">
+            <i class="fas fa-user"></i>
+            <strong><label for="preference" class="pl-2 font-weight-bold">Preference</label></strong>
+            <select class="pref form-control" name="dpreference">
+                <option <% if(results.d_type == 'Veg') { %> selected <% } %>>Veg</option>
+                <option <% if(results.d_type == 'Non Veg') { %> selected <% } %>>Non Veg</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <i class="fas fa-key"></i><strong><label for="img" class="pl-2 font-weight-bold">Image
+            </label></strong><input type="file" class="form-control" name="dimage">
+        </div>
+        <button type="submit" class="btn btn-danger" name="dish_update">Update</button>
+    </form>
+</div>
+</div>
+</div>
+<%- include('../partials/restaurantFooter.ejs') %>

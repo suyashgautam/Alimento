@@ -1,0 +1,458 @@
+<%- include('../partials/customerHeader.ejs', {title: "Cart"}) %>
+<style>
+    #map {
+  height: 100%;
+}
+
+/* 
+ * Optional: Makes the sample page fill the window. 
+ */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  font-size: 18px;
+  color: rgb(104, 104, 104);
+}
+
+#map {
+  height: inherit;
+  width: 100%;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  /* max-width: 400px; */
+  padding: 20px;
+  border: 1px black solid;
+}
+
+input {
+  width: 100%;
+  height: 2.0rem;
+  margin-top: 0;
+  padding: 0.2 rem;
+  border: 0;
+  border-bottom: 2px solid #f8f9fa;
+  font-family: "Roboto", sans-serif;
+  font-size: 18px;
+}
+
+input:focus {
+  border-bottom: 4px solid black;
+}
+
+input[type=reset] {
+  width: auto;
+  height: auto;
+  border-bottom: 0;
+  background-color: transparent;
+  color: rgb(104, 104, 104);
+  font-size: 14px;
+}
+
+.title {
+  width: 100%;
+  margin-block-end: 0;
+  font-weight: 500;
+}
+
+.note {
+  width: 100%;
+  margin-block-start: 0;
+  font-size: 12px;
+}
+
+.form-label {
+  width: 100%;
+  padding: 0.1em;
+}
+
+.full-field {
+  flex: 400px;
+  margin: 15px 0;
+}
+
+.slim-field-left {
+  flex: 1 150px;
+  margin: 15px 15px 15px 0px;
+}
+
+.slim-field-right {
+  flex: 1 150px;
+  margin: 15px 0px 15px 15px;
+}
+
+.my-button {
+  background-color: #000;
+  border-radius: 6px;
+  color: #fff;
+  margin: 10px;
+  padding: 6px 24px;
+  text-decoration: none;
+}
+
+.my-button:hover {
+  background-color: #666;
+}
+
+.my-button:active {
+  position: relative;
+  top: 1px;
+}
+
+img.powered-by-google {
+  margin: 0.5em;
+}
+    </style>
+</style>
+  <!-- Load Leaflet CSS from CDN.  More info at: http://leafletjs.com/examples/quick-start.html-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.css" />
+
+  <!-- Load the Leaflet from CDN. More info at: http://leafletjs.com/examples/quick-start.html-->
+  <script src="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.js"></script>
+
+ <!-- Load the Esri Leaflet plugin from CDN.  For more info: https://esri.github.io/esri-leaflet/examples/ -->
+<script src="//cdn.jsdelivr.net/leaflet.esri/1.0.0/esri-leaflet.js"></script>
+<div style="max-width: 600px;" class="container text-center border rounded bg-light my-5 ml-auto">
+    <h1>MY CART</h1>
+
+
+    <div class="col-md-12 mx-auto">
+        <table class="table">
+            <thead class="text-center">
+                <tr>
+                    <th scope="col">Serial No.</th>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Item Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+            </tbody>
+        </table>
+        <div style="display: flex; flex-direction: row">
+        <form id="address-form" action="" method="get" autocomplete="off">
+            <p class="title">Address</p>
+            <p class="note"><em>* = required field</em></p>
+            <label class="full-field">
+              <!-- Avoid the word "address" in id, name, or label text to avoid browser autofill from conflicting with Place Autocomplete. Star or comment bug https://crbug.com/587466 to request Chromium to honor autocomplete="off" attribute. -->
+              <span class="form-label">Deliver to*</span>
+              <input
+                id="ship-address"
+                name="ship-address"
+                required
+                autocomplete="off"
+              />
+            </label>
+            <label class="full-field">
+              <span class="form-label">Apartment, unit, suite, or floor #</span>
+              <input id="address2" name="address2" />
+            </label>
+            <label class="full-field">
+              <span class="form-label">City*</span>
+              <input id="locality" name="locality" required />
+            </label>
+            <label class="slim-field-left">
+              <span class="form-label">State/Province*</span>
+              <input id="state" name="state" required />
+            </label>
+            <label class="slim-field-right" for="postal_code">
+              <span class="form-label">Postal code*</span>
+              <input id="postcode" name="postcode" required />
+            </label>
+            <label class="full-field">
+              <span class="form-label">Country/Region*</span>
+              <input id="country" name="country" required />
+            </label>
+            <input style="display:none" id="clatitude" name="clatitude"/>
+            <input style="display:none" id="clongitude" name="clongitude"/>
+            <!-- Reset button provided for development testing convenience.
+        Not recommended for user-facing forms due to risk of mis-click when aiming for Submit button. -->
+            <input type="reset" value="Clear form" />
+          </form>
+          <div id="map"></div>
+        </div>
+          <button type="button" class="btnGetLoc" id="btnGetLoc">Get Current Location</button>
+          <div style="width: 100%;">
+            <div class="border bg-light rounded p-2">
+                <h4>Grand Total:</h4>
+                <h3 class="text-center" id="gtotal"></h3>
+                <br>
+            </div>
+        </div>
+        <button name="purchase" class="btn btn-primary btn-block" onclick = "makePurchase()">Make Purchase</button>
+    </div>
+</div>
+<div id="pageMessages">
+
+</div>
+<script>
+    var allCartDishes;
+    function createAlert(title, summary, details, severity, dismissible, autoDismiss, appendToId) {
+var iconMap = {
+    info: "fa fa-info-circle",
+    success: "fa fa-thumbs-up",
+    warning: "fa fa-exclamation-triangle",
+    danger: "fa ffa fa-exclamation-circle"
+};
+
+var iconAdded = false;
+
+var alertClasses = ["alert", "animated", "flipInX"];
+alertClasses.push("alert-" + severity.toLowerCase());
+
+if (dismissible) {
+    alertClasses.push("alert-dismissible");
+}
+
+var msgIcon = $("<i />", {
+    "class": iconMap[severity] // you need to quote "class" since it's a reserved keyword
+});
+
+var msg = $("<div />", {
+    "class": alertClasses.join(" ") // you need to quote "class" since it's a reserved keyword
+});
+
+if (title) {
+    var msgTitle = $("<h4 />", {
+    html: title
+    }).appendTo(msg);
+    
+    if(!iconAdded){
+    msgTitle.prepend(msgIcon);
+    iconAdded = true;
+    }
+}
+
+if (summary) {
+    var msgSummary = $("<strong />", {
+    html: summary
+    }).appendTo(msg);
+    
+    if(!iconAdded){
+    msgSummary.prepend(msgIcon);
+    iconAdded = true;
+    }
+}
+
+if (details) {
+    var msgDetails = $("<p />", {
+    html: details
+    }).appendTo(msg);
+    
+    if(!iconAdded){
+    msgDetails.prepend(msgIcon);
+    iconAdded = true;
+    }
+}
+
+
+if (dismissible) {
+    var msgClose = $("<span />", {
+    "class": "close", // you need to quote "class" since it's a reserved keyword
+    "data-dismiss": "alert",
+    html: "<i class='fa fa-times-circle'></i>"
+    }).appendTo(msg);
+}
+
+$('#' + appendToId).prepend(msg);
+
+if(autoDismiss){
+    setTimeout(function(){
+    msg.addClass("flipOutX");
+    setTimeout(function(){
+        msg.remove();
+    },1000);
+    }, 5000);
+}
+}
+    const makePurchase = () => {
+        var shipAddress = document.querySelector('#ship-address').value;
+        var address2 = document.querySelector('#address2').value;
+        var locality = document.querySelector('#locality').value;
+        var state = document.querySelector('#state').value;
+        var postcode = document.querySelector('#postcode').value;
+        var country = document.querySelector('#country').value;
+        var latitude = document.querySelector('#clatitude').value;
+        var longitude = document.querySelector('#clongitude').value;
+        console.log(latitude, longitude);
+        if((shipAddress == null || shipAddress == '') || (address2 == null || address2 == '') || 
+        (locality == null || locality == '') || (state == null || state == '') || 
+        (postcode == null || postcode == '') || (country == null || country == ''))
+        {
+          return createAlert('Something went wrong','Address fields cannot be empty!','','danger',true,false,'pageMessages');
+          //return alert('Address fields cannot be empty!');
+        }
+        var lineItems = allCartDishes.map(item => {
+            return {
+                d_id: item.d_id,
+                d_name: item.d_name,
+                quantity: parseInt(item.cart_quantity),
+                d_cost: item.d_cost,
+            }
+        })
+        var data = {
+          items : lineItems
+        }
+        data.address = {
+            c_address: address2 + ' ' + shipAddress,
+            c_city: locality,
+            c_state: state,
+            c_postalcode: postcode,
+            c_country: country,
+            c_latitude: latitude,
+            c_longitude: longitude
+        }
+
+        fetch('/create-checkout-session', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({data: data})
+        })
+        .then(res => {
+            if (res.ok) return res.json()
+            return res.json().then(json => Promise.reject(json))
+        })
+        .then(({ url }) => {
+            window.location = url
+        })
+        .catch(e => {
+            console.error(e.error)
+        })
+    }
+
+    const updateQty = (id, email, d_cost) => {
+        var e = document.querySelector('#quantity' + id);
+        const data = {
+            qty: e.value,
+            d_id: id,
+            c_email: email
+        }
+        fetch('/cart', {method: 'PATCH', headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },body: JSON.stringify(data)}).then(response => response.json()).then(response => {
+            var e = document.querySelector('#quantity' + id);
+            var itotal = document.querySelector('#d' + id);
+            var gtotal = document.querySelector('#gtotal');
+            gtotal.innerHTML = (parseInt(gtotal.innerHTML)) - (parseInt(itotal.innerHTML)) + (d_cost * e.value);
+            itotal.innerHTML = (d_cost * e.value);
+            allCartDishes.map((dish, index) => {
+              if(dish.d_id == data.d_id) {
+                dish.cart_quantity = parseInt(data.qty);
+              }
+            })
+        });
+    }
+
+    const cartDishes = () => {
+        const tbody = document.querySelector('tbody');
+        const tcost = document.querySelector('#gtotal');
+        fetch('/cartdishes').then(response => response.json()).then(response => {
+            allCartDishes = response;
+            let tb = ``;
+            let cost = 0;
+            response.forEach((element, index) => {
+                cost = cost + (element.cart_quantity * element.d_cost);
+                const d_name = (element.d_name).replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+                const dishes = `<tr>
+                        <th scope='row'>${index + 1}</th>
+                        <td>${d_name}</td>
+                        <td>${element.d_cost}<input type='hidden' class='iprice'
+                                value=${element.d_cost}></td>
+                        <td>
+                            <select name="quantity" id="quantity${element.d_id}" onchange = "updateQty('${element.d_id}', '${element.c_email}', '${element.d_cost}')">
+                                <option value="1" ${element.cart_quantity === 1 ? 'selected' : ''}>1</option>
+                                <option value="2" ${element.cart_quantity === 2 ? 'selected' : ''}>2</option>
+                                <option value="3" ${element.cart_quantity === 3 ? 'selected' : ''}>3</option>
+                                <option value="4" ${element.cart_quantity === 4 ? 'selected' : ''}>4</option>
+                                <option value="5" ${element.cart_quantity === 5 ? 'selected' : ''}>5</option>
+                                <option value="6" ${element.cart_quantity === 6 ? 'selected' : ''}>6</option>
+                                <option value="7" ${element.cart_quantity === 7 ? 'selected' : ''}>7</option>
+                                <option value="8" ${element.cart_quantity === 8 ? 'selected' : ''}>8</option>
+                            </select>
+                            </td>
+                        <td class='itotal' id = 'd${element.d_id}'>${element.cart_quantity * element.d_cost}</td>
+                        <td>
+                            <button name='Remove_Item' class='btn btn-sm btn-outline-danger' onclick = "deleteDish('${element.d_id}')">REMOVE</button>
+                        </td>
+                    </tr>`
+                tb = tb + dishes; 
+            });
+            tbody.innerHTML = tb;
+            tcost.innerHTML = cost;
+        });
+    }
+    window.addEventListener('load', cartDishes)
+    const tcost = document.querySelector('#gtotal');
+    const deleteDish = (d_id) => {
+        fetch('/cart?dish='+d_id, {method: 'DELETE', headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        }}).then(response => {
+            cartDishes();
+        })
+    }
+
+
+    const lat = document.querySelector('input[name=clatitude]')
+    const long = document.querySelector('input[name=clongitude]');
+    console.log(lat, long);
+    var latvalue = ((lat.value !== '') ? parseFloat(lat.value) : 20.5937);
+    var longvalue = ((long.value !== '') ? parseFloat(long.value) : 78.9629);
+
+    var map = L.map('map').setView([latvalue, longvalue], 10); //35.9886° N, 78.9072° W
+    console.log(latvalue, longvalue);
+    var new_event_marker = new L.marker({lat: latvalue, lon : longvalue},
+    { draggable: true, autoPan: true});
+    new_event_marker.addTo(map)
+    L.esri.basemapLayer('Topographic').addTo(map);
+
+    function onLocationFound(e) {
+        var radius = e.accuracy / 2;
+        lat.value = e.latlng.lat;
+        long.value = e.latlng.lng;
+        if(typeof(new_event_marker) === 'undefined')
+        {
+            new_event_marker = new L.marker(e.latlng,{ draggable: true, autoPan: true});
+            new_event_marker.addTo(map)
+        }
+        else
+        {
+            new_event_marker.setLatLng(e.latlng); 
+        }
+    }
+
+    function onLocationError(e) {
+      return createAlert('Something went wrong',e.message,'','danger',true,false,'pageMessages');
+      //alert(e.message);
+    }
+    L.DomEvent.on(document.getElementById('btnGetLoc'), 'click', function(){
+        map.on('locationfound', onLocationFound);
+        map.on('locationerror', onLocationError);
+        map.locate({setView: true, maxZoom: 16});
+    })
+
+    new_event_marker.on('dragend', function(event) {
+        var marker = event.target;
+        var position = marker.getLatLng();
+        console.log(position);
+        lat.value = position.lat;
+        long.value = position.lng;
+        console.log(lat, long);
+    })
+
+</script>
+
+<%- include('../partials/customerFooter.ejs') %>

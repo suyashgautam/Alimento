@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+    <link rel="stylesheet" href="../css/all.min.css">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
+
+
+    <style>
+    .custom-margin {
+        margin-top: 8vh;
+    }
+    </style>
+    <title>Restaurant Signup</title>
+</head>
+
+<body>
+    <div class="mb-3 text-center mt-5" style="font-size: 30px;">
+        <i class="fas fa-utensils"></i>
+        <span><strong>Alimento</strong></span>
+    </div>
+    <p class="text-center" style="font-size: 20px;"> <i class="fas fa-user-secret text-danger"></i> <span>Restaurant
+            Signup</span>
+    </p>
+    <div class="container pt-5" id="registration">
+        <h2 class="text-center">Create an Account</h2>
+        <div class="row mt-4 mb-4">
+            <div class="col-md-6 offset-md-3">
+                <%
+                if(message == 1){
+                %>
+                <div class="form-group success-alert">
+                <div class="alert alert-success" role="alert">
+                User Succefully created !
+                </div>
+                </div>
+                <%
+                }
+                %>
+                <form action="" class="shadow-lg p-4" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <i class="fas fa-user"></i><label for="name" class="pl-2 font-weight-bold">Name</label><input
+                            type="text" class="form-control" placeholder="Name" name="rname" required>
+                    </div>
+
+                    <div class="form-group">
+                        <i class="fas fa-address-book"></i><label for="address"
+                            class="pl-2 font-weight-bold">Address</label><input type="text" class="form-control"
+                            placeholder="Address" name="raddress" required>
+                    </div>
+
+                    <div class="form-group">
+                        <i class="fas fa-envelope"></i><label for="email"
+                            class="pl-2 font-weight-bold">Email</label><input type="email" class="form-control"
+                            placeholder="Email" name="remail" required>
+                        <!--Add text-white below if want text color white-->
+                        <small class="form-text">We'll never share your email with anyone else.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <i class="fas fa-key"></i><label for="pass" class="pl-2 font-weight-bold">New
+                            Password</label><input type="password" class="form-control" placeholder="Password"
+                            name="rpassword" minlength="8" required>
+                    </div>
+
+                    <div class="form-group">
+                        <i class="fas fa-city"></i><label for="rcity" class="pl-2 font-weight-bold">City</label>
+                        <select id="rcity" name="rcity" class="form-control">
+                            <option value="lucknow">Lucknow</option>
+                            <option value="delhi">Delhi</option>
+                          </select>
+                    </div>
+
+                    <div class="form-group">
+                        <i class="fas fa-image"></i><label for="img" class="pl-2 font-weight-bold">Image
+                        </label><input type="file" class="form-control" name="rimage">
+                    </div>
+
+                    <button type="submit" class="btn btn-danger mt-5 btn-block shadow-sm font-weight-bold"
+                        name="rSignup">Sign Up</button>
+                    <em style="font-size:10px;">Note - By clicking Sign Up, you agree to our Terms, Data
+                        Policy and Cookie Policy.</em>
+                </form>
+                <div class="text-center"><a class="btn btn-info mt-3 shadow-sm font-weight-bold"
+                        href="/">Back
+                        to Home</a></div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Boostrap JavaScript -->
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/all.min.js"></script>
+    <script>
+        const alert = document.querySelector('.success-alert');
+        
+        if(!alert.classList.contains('hide'))
+        {
+            console.log(alert.classList);
+            setTimeout(()=>{
+                alert.classList.add('hide');
+                console.log("Hello");
+            }, 3000)
+        }
+    </script>
+</body>
+
+</html>

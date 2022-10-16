@@ -1,0 +1,101 @@
+<%- include('../partials/restaurantHeader.ejs', {title: "Change Password"}) %>
+<div class="col-sm-9 col-md-10">
+    <div class="row">
+        <div class="col-sm-6">
+            <form class="mt-5 mx-5" method="POST" onsubmit="event.preventDefault(); checkPasswords();">
+                <div class="form-group success-alert hide">
+                    <div class="alert alert-success" role="alert">
+                    User Password updated !
+                    </div>
+                </div>
+                <div class="form-group failure-alert hide">
+                    <div class="alert alert-danger" role="alert">
+                    Some failure happened !
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail" class="pl-2 font-weight-bold">Email</label>
+                    <input type="email" class="form-control" id="inputEmail" value=<%= user.email %> readonly>
+                </div>
+                <div class="form-group">
+                    <label for="inputnewpassword" class="pl-2 font-weight-bold">Old Password</label>
+                    <input type="password" class="form-control old" id="inputoldpassword" placeholder="Old Password"
+                        name="roPassword" minlength="8" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputnewpassword" class="pl-2 font-weight-bold">New Password</label>
+                    <input type="password" class="form-control new" id="inputnewpassword" placeholder="New Password"
+                        name="rnPassword" minlength="8" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputnewpassword" class="pl-2 font-weight-bold">Confirm New Password</label>
+                    <input type="password" class="form-control connew" id="inputconnewpassword" placeholder="Confirm New Password"
+                        name="rcPassword" minlength="8" required>
+                </div>
+                <button type="submit" class="btn btn-danger mr-4 mt-4" name="passupdate">Update</button>
+                <button type="reset" class="btn btn-secondary mt-4">Reset</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<script>
+    function checkPasswords(){
+        var email = document.querySelector('#inputEmail');
+        var oldPass = document.querySelector('#inputoldpassword');
+        var newPass = document.querySelector('#inputnewpassword');
+        var conPass = document.querySelector('#inputconnewpassword');
+        if(newPass.value !== conPass.value)
+        {
+            console.log("Pasword didnt matched");
+            failurealert.classList.remove('hide');
+            setTimeout(()=>{
+                failurealert.classList.add('hide');
+            }, 2000)
+        }
+        else
+        {
+            if(newPass.value.length < 8)
+            {
+                console.log("Password is small");
+                failurealert.classList.remove('hide');
+                setTimeout(()=>{
+                    failurealert.classList.add('hide');
+                }, 2000)
+            }
+            else
+            {
+                fetch('/changepassword', {method: "POST", headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+                },body: JSON.stringify({
+                    email: email.value,
+                    oldpassword: oldPass.value,
+                    newpassword: newPass.value
+                })}).then(response => response.json()).then(response => {
+                    const successalert = document.querySelector('.success-alert');
+                    const failurealert = document.querySelector('.failure-alert');
+                    oldPass.value = ''
+                    newPass.value = ''
+                    conPass.value = ''
+                    if(response.message === 'success')
+                    {
+                        successalert.classList.remove('hide');
+                        setTimeout(()=>{
+                            successalert.classList.add('hide');
+                        }, 2000)
+                    }
+                    else
+                    {
+                        failurealert.classList.remove('hide');
+                        setTimeout(()=>{
+                            failurealert.classList.add('hide');
+                        }, 2000)
+                    }
+                });
+            }
+        }
+    }
+</script>
+<%- include('../partials/restaurantFooter.ejs')%>

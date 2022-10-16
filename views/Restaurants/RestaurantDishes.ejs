@@ -1,0 +1,50 @@
+<%- include('../partials/restaurantHeader.ejs', {title: "All Dishes"}) %>
+<div class="container tab-content" id="myTabContent" style="align-items: center; max-width: 700px;">
+
+    <div class="mt-5" id="viewitem" role="tabpanel" aria-labelledby="home-tab">
+        <div class="container">
+            <table border="1" bordercolor="#F0F0F0" cellpadding="20px" class="dish-table">
+                <th>Pic</th>
+                <th>Food Name</th>
+                <th>Food Price</th>
+                <th>Type</th>
+                <th>Delete Item </th>
+                <th>Update item Details </th>
+            </table>
+        </div>
+    </div>
+<script>
+    const id = `<%= user.id %>`
+    console.log(id);
+    const dishTable = document.querySelector('.dish-table');
+    fetch(`/alldishes/${id}`).then(response => response.json()).then(response => {
+        var dish = ``;
+        response.forEach(element => {
+            const d_name = (element.name).replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+            dish = dish + `<tr>
+                    <td><img src=${element.image} alt="" height="150" width="150"><br></td>
+                    <td style="width:150px;">${d_name}<br></td>
+                    <td align="center" style="width:150px;">${element.cost}<br></td>
+                    <td align="center" style="width:150px;">${element.type}<br></td>
+
+                    <td align="center" style="width:150px;">
+
+                        <!-- <a href="vendor_delete_food.php?food_id=""><button type="button" class="btn btn-warning">Delete </button></a> -->
+
+                                <a href='/deletedish?dish=${element.d_id}'><button
+                                name="Delete" type="submit" class="btn btn-warning">Delete </button></a>
+
+
+                    </td>
+                    <td align="center" style="width:150px;">
+
+                        <a href='/updatedish?dish=${element.d_id}'><button type="button"
+                                class="btn btn-danger">Update </button></a>
+                    </td>
+                </tr>`
+        });
+
+        dishTable.insertAdjacentHTML('beforeend', dish);
+    })
+</script>
+<%- include('../partials/restaurantFooter.ejs') %>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet" />
+    <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="../css/all.min.css">
+
+    <link rel="stylesheet" href="../css/custom.css">
+
+    <link rel="stylesheet" href="../css/jumbo.css">
+    <link rel="stylesheet" href="../css/autoComplete.css">
+    <link rel="stylesheet" href="../css/slider.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <style>
+    body{
+        padding-top: 87px;
+        /* padding-bottom: 50px; */
+    }
+    </style>
+    <title>Alimento</title>
+</head>
+
+<body>
+
+    <!-- Nav menu with user information -->
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark p-0 pmd-navbar pmd-z-depth fixed-top">
+       
+
+        <div class="navbar-nav" style="width: 100%; flex-direction: row;">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/" style="margin-top: auto; margin-bottom: auto;">Alimento</a>
+            <div style = "display: flex; flex-direction: row;" class="wrapper-auto container">
+                <div style="height: 55px;" class="city-input">
+                    <select style="height: 100%; background-color: white; border-radius: 5px;" name="location" id="location">
+                        <option value="lucknow">Lucknow</option>
+                        <option value="delhi">Delhi</option>
+                    </select>
+                </div>
+                <div class="search-input">
+                    <a href="" target="_blank" hidden></a>
+                    <input type="text" placeholder="Search for restaurant or a dish">
+                    <div class="autocom-box">
+                    <!-- here list are inserted from javascript -->
+                    </div>
+                    <div class="icon"><i class="fas fa-search"></i></div>
+                </div>
+            </div>
+            <div class="navbar-nav ml-auto mt-auto mb-auto" style="flex-direction: row">
+                <% if(user && user.type == 'customer'){%>
+                <div class="ml-auto mr-2">
+                    <a href="/cart"><span style="color:white; font-size:30px;"><i
+                                class="fas fa-shopping-cart" aria-hidden="true"><span style="color:red;" id="cart"
+                                    class="badge badge-light"></span></i></span></a>
+                    </div>
+                <% }%>
+    
+                <div class="dropdown pmd-dropdown pmd-user-info mr-3 p-1">
+                    <% if (user) {%>
+                        <a href="javascript:void(0);" class="btn-user dropdown-toggle media align-items-center" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
+                            <img class="mr-2" src= <% if(user.type == 'restaurant') { %> "<%= user.image %><% } %> <% if(user.type == 'customer') { %> "<%= user.image %><% } %>" width="40" height="40" style = "border-radius: 50px" alt="avatar">
+                            <div style = "color: white;" class="media-body">
+                                  <%= user.name %>  
+                            </div>
+                            <i class="fas fa-ellipsis-v" aria-hidden="true">    </i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                            <a class="dropdown-item" href="/profile">Dashboard</a>
+                            <a class="dropdown-item" href="/logout">Logout</a>
+                        </ul></div>
+                    <% } else { %>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myLoginModal">
+                            Login
+                          </button>
+                          /
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mySignupModal">
+                          Signup
+                        </button>
+                        </div></div>
+                    <% } %>
+                </div>
+        </div>
+    </nav>
+
+    <div class="modal fade" id="mySignupModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100">Signup</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="card-columns d-flex justify-content-center">
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="./customersignup">
+                                        <img class="card-img-top" src="./images/customer.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="text-center card-title">Customer Signup</h4>
+                                </div>
+                            </div>
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="./restaurantsignup">
+                                        <img class="card-img-top" src="./images/rest.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="text-center card-title">Restaurant Signup</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myLoginModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100">Login</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="card-columns d-flex justify-content-center">
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="/customerlogin">
+                                        <img class="card-img-top" src="./images/customer.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="text-center card-title">Customer Login</h4>
+                                </div>
+                            </div>
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="/restaurantlogin">
+                                        <img class="card-img-top" src="./images/rest.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="text-center card-title">Restaurant Login</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="container mt-5">
+        <h1 class="rest-title"></h1>
+        <div class="row allRestaurants">
+        </div>       
+    </div>
+    <footer class="text-center text-white" style="background-color: #f1f1f1;">
+        <!-- Grid container -->
+        <div class="container pt-4">
+            <!-- Section: Social media -->
+            <section class="mb-4">
+                <!-- Facebook -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-facebook-f"></i></a>
+    
+                <!-- Twitter -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-twitter"></i></a>
+    
+                <!-- Google -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-google"></i></a>
+    
+                <!-- Instagram -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-instagram"></i></a>
+    
+                <!-- Linkedin -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-linkedin"></i></a>
+                <!-- Github -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-github"></i></a>
+            </section>
+            <!-- Section: Social media -->
+        </div>
+        <!-- Grid container -->
+    
+        <!-- Copyright -->
+        <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2022 Copyright:
+            <a class="text-dark" href="https://suyashgautam.me/">Suyash Gautam</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/all.min.js"></script>
+    <script src="../js/autoComplete.js"></script>
+    <script>
+        var showRestaurant = document.querySelector(".allRestaurants");
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        const dish_name = urlParams.get('d_name');
+        const city = (window.location.pathname).replace('/', '');
+        const title = document.querySelector('.rest-title');
+        let tempCity = (city).replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+        title.innerHTML = `<strong>Restaurant serving in ${tempCity}</strong>`
+        var allRest = '';
+        fetch(`/search/restaurant?city=${city}&d_name=${dish_name}`).then(response => response.json()).then(response => {
+            console.log(response);
+            response.forEach(element => {
+                const r_name = (element.r_name).replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+                const newd = `<div class="col-lg-3 mb-5">
+                    <a href="/restaurant/${element.rest_id}">
+                    <div class="card">
+                    <img src="${(element.r_image == "")?"./image-not-available.jpg":'../' + element.r_image}" height="150" width="100%" alt="" class="card-img-top">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><strong>${r_name}</strong></h5>
+                            <p class="card-text"><strong><em>Address:</em></strong> ${element.r_address}</p>
+                        </div>
+                    </div>
+                </a>
+                </div>`;
+                allRest = allRest + newd;
+            })
+            showRestaurant.innerHTML = allRest;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<%- include('../partials/customerHeader.ejs', {title: "Previous Orders"}) %>
+<style>
+.hh-grayBox {
+	margin-bottom: 5px;
+	padding: 5px;
+  margin-top: 5px;
+}
+.pt45{padding-top:45px;}
+.order-tracking{
+	text-align: center;
+	width: 25.00%;
+	position: relative;
+	display: block;
+}
+.order-tracking .is-complete{
+	display: block;
+	position: relative;
+	border-radius: 50%;
+	height: 30px;
+	width: 30px;
+	border: 0px solid #AFAFAF;
+	background-color: #f7be16;
+	margin: 0 auto;
+	transition: background 0.25s linear;
+	-webkit-transition: background 0.25s linear;
+	z-index: 2;
+}
+
+.order-tracking .is-canceled{
+    display: block;
+	position: relative;
+	border-radius: 50%;
+	height: 30px;
+	width: 30px;
+	border: 0px solid #AFAFAF;
+	background-color: red;
+	margin: 0 auto;
+	transition: background 0.25s linear;
+	-webkit-transition: background 0.25s linear;
+	z-index: 2; 
+}
+
+.order-tracking .is-complete:after {
+	display: block;
+	position: absolute;
+	content: '';
+	height: 14px;
+	width: 7px;
+	top: -2px;
+	bottom: 0;
+	left: 5px;
+	margin: auto 0;
+	border: 0px solid #AFAFAF;
+	border-width: 0px 2px 2px 0;
+	transform: rotate(45deg);
+	opacity: 0;
+}
+.order-tracking.completed .is-complete{
+	border-color: #27aa80;
+	border-width: 0px;
+	background-color: #27aa80;
+}
+.order-tracking.completed .is-complete:after {
+	border-color: #fff;
+	border-width: 0px 3px 3px 0;
+	width: 7px;
+	left: 11px;
+	opacity: 1;
+}
+.order-tracking p {
+	color: #A4A4A4;
+	font-size: 12px;
+	margin-top: 4px;
+	margin-bottom: 0;
+	line-height: 20px;
+}
+.order-tracking p span{font-size: 12px;}
+.order-tracking.completed p{color: #000;}
+.order-tracking::before {
+	content: '';
+	display: block;
+	height: 3px;
+	width: calc(100% - 40px);
+	background-color: #f7be16;
+	top: 13px;
+	position: absolute;
+	left: calc(-50% + 20px);
+	z-index: 0;
+}
+.order-tracking:first-child:before{display: none;}
+.order-tracking.completed:before{background-color: #27aa80;}
+.crosssign {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  transform: rotate(45deg);
+}
+
+.crosssign_circle {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: red;
+  border-radius: 15px;
+  left: 0;
+  top: 0;
+}
+
+.crosssign_stem,
+.crosssign_stem2 {
+  position: absolute;
+  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.crosssign_stem {
+  width: 3px;
+  height: 14px;
+}
+
+.crosssign_stem2 {
+  width: 14px;
+  height: 3px;
+}
+</style>
+<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+<section style="width: 80%;" class="text-center overflow-auto">  
+    <section style="width: 90%; margin:auto" id="section-active-orders">
+        <div class="container">
+            <h3>Active Orders</h3>
+            <div class='row dashboard-cards' id = "active-orders">
+                
+            </div>
+        </div>
+    </section>
+
+    <section style="width: 90%; margin:auto" id="section-completed-orders">
+        <div class="container">
+            <h3>Past Orders</h3>
+            <div class='row dashboard-cards' id = "past-orders">
+            </div>
+        </div>
+    </section>
+
+</section>
+</div>
+</div>
+<script>
+    fetch('/allorders').then(response => response.json()).then(response => {
+        const orderid = new Set();
+        response.forEach(element => {
+            orderid.add(element.o_id);
+        });
+        let activeOrders = document.querySelector('#active-orders');
+        let pastOrders = document.querySelector('#past-orders');
+        const od_id = Array.from(orderid);
+        od_id.forEach((no_id, index) => {
+            let listele = ``;
+            let cnt = 0;
+            let tcost = 0;
+            let odate = '';
+            let status = '';
+            let restDetails = '';
+            activeOrders = document.querySelector('#active-orders');
+            pastOrders = document.querySelector('#past-orders');
+            response.forEach(element => {
+                const d_name = (element.d_name).replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+                if(element.o_id === no_id)
+                {
+                    let orderslist = `<li>
+                                            ${d_name}
+                                            <span>${element.d_quantity} x &#x20b9 ${element.o_payment / element.d_quantity}</span>
+                                        </li>`
+                    listele = listele + orderslist;   
+                    cnt = cnt + 1;
+                    tcost = tcost + element.o_payment;
+                    status = element.o_status
+                    odate = new Date(element.o_datetime).toLocaleString('en-in');   
+                    restDetails = (element.r_name).replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase()) + ', ' + element.r_address;    
+                }
+            })
+
+            let header = `<div class='card col-md-8 m-auto'>
+                                <div class='card-title'>
+                                    <h2>
+                                        Order ID: ${no_id}
+                                    </h2>
+                                    <div class='task-count' style="background-color:${(status == 'Canceled') ? '#FF3131' : '#27aa80'}">
+                                        ${status}
+                                    </div>
+                                    <div style = "margin-top: 10px; display: flex; flex-direction: row; justify-content: space-between;">
+                                        <small style="font-weight: 500;">${restDetails}</small>
+                                        <small style="font-weight: 450;">${odate}</small>
+                                    </div>
+                                </div>
+                                <div class='card-flap flap1'>
+                                    <div class='card-description'>
+                                        <ul class='task-list'>`
+            const totalcost = `<li>
+                                            <strong>Total Amount</strong>
+                                            <strong><span>Rs. ${tcost}</span></strong>
+                                        </li>`;
+            console.log(status);
+            const footer = `</ul>
+                            </div>
+                                <div class='card-flap flap2'>
+                                    <div class="m-auto col-12 col-md-10 hh-grayBox text-center">
+                                        ${(status !== 'Canceled') ? `<div class="row justify-content-between">
+                                            <div class="order-tracking ${(status === 'Order Confirmation' || status === 'Preparing food' || status === 'On its way' || status === 'Delievered') ? 'completed' : ''}">
+                                                <span class="is-complete"></span>
+                                                <p>Ordered<br><span>Mon, June 24</span></p>
+                                            </div>
+                                            <div class="order-tracking ${(status === 'Preparing food' || status === 'On its way' || status === 'Delievered') ? 'completed' : ''}">
+                                                <span class="is-complete"></span>
+                                                <p>Preparing food</p>
+                                            </div>
+                                            <div class="order-tracking ${(status === 'On its way' || status === 'Delievered') ? 'completed' : ''}">
+                                                <span class="is-complete"></span>
+                                                <p>On its way</p>
+                                            </div>
+                                            <div class="order-tracking ${(status === 'Delievered') ? 'completed' : ''}">
+                                                <span class="is-complete"></span>
+                                                <p>Delievered</p>
+                                            </div>
+                                        </div>` : `<div class="order-tracking m-auto">
+                                                 <span class="crosssign">
+                                                     <div class="crosssign_circle"></div>
+                                                     <div class="crosssign_stem"></div>
+                                                     <div class="crosssign_stem2"></div>
+                                                 </span>
+                                                 <p>Canceled<br><span></span></p>
+                                            </div>`}
+                                            <div class="text-center"><a class="btn btn-info mt-3 shadow-sm font-weight-bold"
+                                                href="/order/${no_id}" target="_blank">Track Your Order</a>
+                                            </div>  
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`
+            if(status === 'Delievered' || status === 'Canceled') {
+                pastOrders.insertAdjacentHTML('beforeend', header + listele + totalcost + footer)
+            }
+            else
+                activeOrders.insertAdjacentHTML('beforeend', header + listele + totalcost + footer)
+        })
+
+        console.log("Function.js");
+        $(document).ready(function () {
+        var zindex = 10;
+        console.log("Function.js");
+        // $("div.card").click(function (e) {
+        //     e.preventDefault();
+
+        //     var isShowing = false;
+
+        //     if ($(this).hasClass("d-card-show")) {
+        //     isShowing = true;
+        //     }
+
+        //     if ($("div.dashboard-cards").hasClass("showing")) {
+        //     $("div.card.d-card-show").removeClass("d-card-show");
+
+        //     if (isShowing) {
+        //         $("div.dashboard-cards").removeClass("showing");
+        //     } else {
+        //         $(this).css({ zIndex: zindex }).addClass("d-card-show");
+        //     }
+
+        //     zindex++;
+        //     } else {
+        //     $("div.dashboard-cards").addClass("showing");
+        //     $(this).css({ zIndex: zindex }).addClass("d-card-show");
+
+        //     zindex++;
+        //     }
+        // });
+        $("div.card-title").click(function (e) {
+            e.preventDefault();
+            var isShowing = false;
+            if ($(this).parent().hasClass("d-card-show")) {
+            isShowing = true;
+            }
+            if ($("div.dashboard-cards").hasClass("showing")) {
+            $("div.card.d-card-show").removeClass("d-card-show");
+            if (isShowing) {
+                $("div.dashboard-cards").removeClass("showing");
+            } else {
+                $(this).parent().css({ zIndex: zindex }).addClass("d-card-show");
+            }
+            zindex++;
+            } else {
+            $("div.dashboard-cards").addClass("showing");
+            $(this).parent().css({ zIndex: zindex }).addClass("d-card-show");
+            zindex++;
+            }
+        });
+        });
+    });
+
+</script>
+<%- include('../partials/customerFooter.ejs') %>

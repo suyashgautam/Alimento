@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    <link rel="stylesheet" href="./css/style.css">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet" />
+    <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="./css/all.min.css">
+
+    <link rel="stylesheet" href="./css/custom.css">
+
+    <link rel="stylesheet" href="./css/jumbo.css">
+    <link rel="stylesheet" href="./css/autoComplete.css">
+    <link rel="stylesheet" href="./css/searchRestaurants.css">
+    <link rel="stylesheet" href="./css/slider.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <title>404 | Alimento</title>
+</head>
+
+<body>
+
+    <!-- Nav menu with user information -->
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark p-0 pmd-navbar pmd-z-depth fixed-top">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">Alimento</a>
+
+        <div class="navbar-nav" style="width: 100%">
+            <div class="dropdown pmd-dropdown pmd-user-info ml-auto mr-2"
+                style="display: none">
+                <a href="Customer/CustomerCart.php"><span style="color:green; font-size:30px;"><i
+                            class="fas fa-shopping-cart" aria-hidden="true"><span style="color:red;" id="cart"
+                                class="badge badge-light"></span></i></span></a>
+            </div>
+            <div class="wrapper-auto container" style="width:500px; margin: 10px auto;">
+                <div class="search-input">
+                    <a href="" target="_blank" hidden></a>
+                    <input type="text" placeholder="Search for restaurant or a dish">
+                    <div class="autocom-box">
+                    <!-- here list are inserted from javascript -->
+                    </div>
+                    <div class="icon"><i class="fas fa-search"></i></div>
+                </div>
+            </div>
+
+            <div class="dropdown pmd-dropdown pmd-user-info mr-3 mt-auto mb-auto">
+                <% if (user) {%>
+                    <a href="javascript:void(0);" class="btn-user dropdown-toggle media align-items-center" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
+                        <img class="mr-2" src= <% if(user.type == 'restaurant') { %> "<%= user.image %><% } %> <% if(user.type == 'customer') { %> "<%= user.image %><% } %>" width="40" height="40" style = "border-radius: 50px" alt="avatar">
+                        <div style = "color: white;" class="media-body">
+                              <%= user.name %>  
+                        </div>
+                        <i class="fas fa-ellipsis-v" aria-hidden="true">    </i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <a class="dropdown-item" href="/profile">Dashboard</a>
+                        <a class="dropdown-item" href="/logout">Logout</a>
+                    </ul></div>
+                <% } else { %>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myLoginModal">
+                        Login
+                      </button>
+                      /
+                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mySignupModal">
+                      Signup
+                    </button>
+                    </div></div>
+                <% } %>
+            </div>
+    </nav>
+
+    <div class="modal fade" id="mySignupModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100">Signup</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="card-columns d-flex justify-content-center">
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="./customersignup">
+                                        <img class="card-img-top" src="./images/customer.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="card-title text-center ">Customer Signup</h4>
+                                </div>
+                            </div>
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="./restaurantsignup">
+                                        <img class="card-img-top" src="./images/rest.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="card-title text-center ">Restaurant Signup</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myLoginModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100">Login</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="card-columns d-flex justify-content-center">
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="/customerlogin">
+                                        <img class="card-img-top" src="./images/customer.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="text-center card-title">Customer Login</h4>
+                                </div>
+                            </div>
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="/restaurantlogin">
+                                        <img class="card-img-top" src="./images/rest.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="text-center card-title">Restaurant Login</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <h1 style="position: relative; top: 200px;">404 Page Not Found</h1>
+    <footer></footer>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/popper.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/all.min.js"></script>
+    <script src="./js/autoComplete.js"></script>
+    <script src="./js/searchRestaurant.js"></script>
+    </body>
+</html>

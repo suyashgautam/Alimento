@@ -1,0 +1,75 @@
+<%- include('../partials/restaurantHeader.ejs', {title: "Add Dish"}) %>
+<div class="container pt-5" id="registration" style="max-width: 900px;">
+    <h2 class="text-center">Add Dish</h2>
+    <div class="row mt-4 mb-4">
+        <div class="col-md-6 offset-md-3">
+            <form action="/adddish" class="shadow-lg p-4" method="POST" enctype="multipart/form-data">
+                <%
+                if(message === true){
+                %>
+                <div class="form-group success-alert">
+                    <div class="alert alert-success" role="alert">
+                        Dish Succefully added to the Menu !
+                    </div>
+                </div>
+                <%
+                }
+                %>
+                <%
+                if(message === false){
+                %>
+                <div class="form-group failure-alert">
+                    <div class="alert alert-danger" role="alert">
+                        Dish Succefully added to the Menu !
+                    </div>
+                </div>
+                <%
+                }
+                %>
+                <div class="form-group">
+                    <i class="fas fa-user"></i><label for="name" class="pl-2 font-weight-bold">Dish Name</label><input
+                        type="text" class="form-control" placeholder="Name" name="dname">
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-user"></i><label for="cost" class="pl-2 font-weight-bold">Cost</label><input
+                        type="number" class="form-control" placeholder="Cost" name="dcost">
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    <label for="preference" class="pl-2 font-weight-bold">Preference</label>
+                    <select class=form-control name="dpreference">
+                        <option>Veg</option>
+                        <option>Non Veg</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-key"></i><label for="img" class="pl-2 font-weight-bold">Image
+                    </label><input type="file" class="form-control" name="dimage">
+                </div>
+
+                <button type="submit" class="btn btn-danger mt-5 btn-block shadow-sm font-weight-bold"
+                    name="AddDish">Add Dish</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    window.addEventListener('load', () => {
+        console.log('Outside');
+        setTimeout(() => {
+            const success = document.querySelector('.success-alert');
+            const failure = document.querySelector('.failure-alert');
+            console.log(success, failure);
+            console.log('Inside');
+            if(success)
+                success.classList.add('hide');
+            if(failure)
+                failure.classList.add('hide');
+            
+        }, 2000)
+    })
+</script>
+<%- include('../partials/restaurantFooter.ejs') %>

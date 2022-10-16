@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet" />
+    <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="../css/all.min.css">
+
+    <link rel="stylesheet" href="../css/custom.css">
+
+    <link rel="stylesheet" href="../css/jumbo.css">
+    <link rel="stylesheet" href="../css/autoComplete.css">
+    <link rel="stylesheet" href="../css/searchRestaurants.css">
+    <link rel="stylesheet" href="../css/slider.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+    integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+    crossorigin=""/>
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+    integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+    crossorigin=""></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+    <style>
+        .rate {
+            float: left;
+            height: 46px;
+            padding: 0 10px;
+        }
+        .rate:not(:checked) > input {
+            position:absolute;
+            top:-9999px;
+        }
+        .rate:not(:checked) > label {
+            float:right;
+            width:1em;
+            overflow:hidden;
+            white-space:nowrap;
+            cursor:pointer;
+            font-size:30px;
+            color:#ccc;
+        }
+        .rate:not(:checked) > label:before {
+            content: '★ ';
+        }
+        .rate > input:checked ~ label {
+            color: #ffc700;    
+        }
+        .rate:not(:checked) > label:hover,
+        .rate:not(:checked) > label:hover ~ label {
+            color: #deb217;  
+        }
+        .rate > input:checked + label:hover,
+        .rate > input:checked + label:hover ~ label,
+        .rate > input:checked ~ label:hover,
+        .rate > input:checked ~ label:hover ~ label,
+        .rate > label:hover ~ input:checked ~ label {
+            color: #c59b08;
+        }
+
+        .rate2 {
+            float: left;
+            height: 46px;
+            padding: 0 10px;
+        }
+        .rate2:not(:checked) > input {
+            position:absolute;
+            top:-9999px;
+        }
+        .rate2:not(:checked) > label {
+            float:right;
+            width:1em;
+            overflow:hidden;
+            white-space:nowrap;
+            cursor:pointer;
+            font-size:30px;
+            color:#ccc;
+        }
+        .rate2:not(:checked) > label:before {
+            content: '★ ';
+        }
+        .rate2 > input:checked ~ label {
+            color: #ffc700;    
+        }
+        .rate2:not(:checked) > label:hover,
+        .rate2:not(:checked) > label:hover ~ label {
+            color: #deb217;  
+        }
+        .rate2 > input:checked + label:hover,
+        .rate2 > input:checked + label:hover ~ label,
+        .rate2 > input:checked ~ label:hover,
+        .rate2 > input:checked ~ label:hover ~ label,
+        .rate2 > label:hover ~ input:checked ~ label {
+            color: #c59b08;
+        }
+        body{
+            padding-top: 87px;
+            /* padding-bottom: 50px; */
+        }
+    </style>
+    <title>Alimento</title>
+</head>
+
+<body>
+
+    <!-- Nav menu with user information -->
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark p-0 pmd-navbar pmd-z-depth fixed-top">
+        <div class="navbar-nav" style="width: 100%; flex-direction: row;">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/" style="margin-top: auto; margin-bottom: auto;">Alimento</a>
+            
+            <div style = "display: flex; flex-direction: row;" class="wrapper-auto container">
+                <div style="height: 55px;" class="city-input">
+                    <select style="height: 100%; background-color: white; border-radius: 5px;" name="Location" id="location">
+                        <option value="lucknow">Lucknow</option>
+                        <option value="delhi">Delhi</option>
+                    </select>
+                </div>
+                <div class="search-input">
+                    <a href="" target="_blank" hidden></a>
+                    <input type="text" placeholder="Search for restaurant or a dish">
+                    <div class="autocom-box">
+                    <!-- here list are inserted from javascript -->
+                    </div>
+                    <div class="icon"><i class="fas fa-search"></i></div>
+                </div>
+            </div>
+            <div class="navbar-nav ml-auto mt-auto mb-auto" style="flex-direction: row">
+                <% if(user && user.type == 'customer'){%>
+                <div class="ml-auto mr-2">
+                    <a href="/cart"><span style="color:white; font-size:30px;"><i
+                                class="fas fa-shopping-cart" aria-hidden="true"><span style="color:red;" id="cart"
+                                    class="badge badge-light"></span></i></span></a>
+                    </div>
+                <% }%>
+    
+                <div class="dropdown pmd-dropdown pmd-user-info mr-3 p-1">
+                    <% if (user) {%>
+                        <a href="javascript:void(0);" class="btn-user dropdown-toggle media align-items-center" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
+                            <img class="mr-2" src= <% if(user.type == 'restaurant') { %> "<%= user.image %><% } %> <% if(user.type == 'customer') { %> "<%= user.image %><% } %>" width="40" height="40" style = "border-radius: 50px" alt="avatar">
+                            <div style = "color: white;" class="media-body">
+                                  <%= user.name %>  
+                            </div>
+                            <i class="fas fa-ellipsis-v" aria-hidden="true">    </i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                            <a class="dropdown-item" href="/profile">Dashboard</a>
+                            <a class="dropdown-item" href="/logout">Logout</a>
+                        </ul></div>
+                    <% } else { %>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myLoginModal">
+                            Login
+                          </button>
+                          /
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mySignupModal">
+                          Signup
+                        </button>
+                        </div></div>
+                    <% } %>
+                </div>
+            </div>
+    </nav>
+
+    <div class="modal fade" id="mySignupModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100">Signup</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="card-columns d-flex justify-content-center">
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="./customersignup">
+                                        <img class="card-img-top" src="./images/customer.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="card-title text-center">Customer Signup</h4>
+                                </div>
+                            </div>
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="./restaurantsignup">
+                                        <img class="card-img-top" src="./images/rest.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="card-title text-center">Restaurant Signup</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myLoginModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100">Login</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="card-columns d-flex justify-content-center">
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="/customerlogin">
+                                        <img class="card-img-top" src="./images/customer.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="text-center card-title">Customer Login</h4>
+                                </div>
+                            </div>
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-block">
+                                    <a href="/restaurantlogin">
+                                        <img class="card-img-top" src="./images/rest.jpg" alt="Card image cap"
+                                            height="150" width="50"></a>
+                                    <h4 class="text-center card-title">Restaurant Login</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myReviewModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100">Add Review</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="card-columns d-flex justify-content-center">
+                            <div class="container tablist">
+                                <div class="tablist-child rest-tab tab-active">Restaurant</div> 
+                                <div class="tablist-child dish-tab">Dish</div> 
+                            </div>
+                        </div>
+                        <div class="container rest-review">
+                            <div>
+                                <div class="rate rest-rate">
+                                    <input type="radio" id="star5-d" name="rate" value="5" />
+                                    <label for="star5-d" title="text">5 stars</label>
+                                    <input type="radio" id="star4-d" name="rate" value="4" />
+                                    <label for="star4-d" title="text">4 stars</label>
+                                    <input type="radio" id="star3-d" name="rate" value="3" />
+                                    <label for="star3-d" title="text">3 stars</label>
+                                    <input type="radio" id="star2-d" name="rate" value="2" />
+                                    <label for="star2-d" title="text">2 stars</label>
+                                    <input type="radio" id="star1-d" name="rate" value="1" />
+                                    <label for="star1-d" title="text">1 star</label>
+                                  </div>
+                                  <textarea id="review" name="review" rows="4" cols="50"></textarea>
+                                <button style="margin-top: 5px;" type="button" onclick = "postRestReview()" id = "addRestReview">Add review</button>
+                            </div>
+                        </div>
+                        <div class="container dish-review d-none">
+                            <div>
+                                <div style="width: 100%;">
+                                    <select style="width: inherit;" id = "dish-review-list">
+
+                                    </select>
+                                </div>
+                                <div class="rate2 dish-rate">
+                                    <input type="radio" id="star5" name="rate" value="5" />
+                                    <label for="star5" title="text">5 stars</label>
+                                    <input type="radio" id="star4" name="rate" value="4" />
+                                    <label for="star4" title="text">4 stars</label>
+                                    <input type="radio" id="star3" name="rate" value="3" />
+                                    <label for="star3" title="text">3 stars</label>
+                                    <input type="radio" id="star2" name="rate" value="2" />
+                                    <label for="star2" title="text">2 stars</label>
+                                    <input type="radio" id="star1" name="rate" value="1" />
+                                    <label for="star1" title="text">1 star</label>
+                                </div>
+                                <button style="margin-top: 10px;" onclick="postDishReview()" type="button" id = "addDishReview">Add review</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div style="display: flex; flex-direction: column;" class="container mt-5">
+        <section class="photos">
+            <div class="container photos">
+                <div class="rest-pics" style="margin: 5px; height: 100%; ">
+                    <img style="height: inherit; width: inherit;" src="<%= restaurant.r_image != '' ? restaurant.r_image : `./image-not-available.jpg` %>">
+                </div>
+                <!-- <div class="rest-pics" style="margin: 5px; height: 100%; width: 100%;">
+                        <img style="height: inherit; width: inherit;" src="<%= restaurant.r_image %>">
+                </div> -->
+                    <!-- <div>
+                        <img src="https://media.istockphoto.com/photos/cozy-restaurant-for-gathering-with-friends-picture-id1159992039?k=20&m=1159992039&s=612x612&w=0&h=t2lqevaWYLXvcjDeKzbHvIRF6GE3gxiqO6AIezr3Mws=">
+                    </div>
+                    <div>
+                        <img src="https://media.istockphoto.com/photos/cozy-restaurant-for-gathering-with-friends-picture-id1159992039?k=20&m=1159992039&s=612x612&w=0&h=t2lqevaWYLXvcjDeKzbHvIRF6GE3gxiqO6AIezr3Mws=">
+                    </div>
+                    <div>
+                        <img src="https://media.istockphoto.com/photos/cozy-restaurant-for-gathering-with-friends-picture-id1159992039?k=20&m=1159992039&s=612x612&w=0&h=t2lqevaWYLXvcjDeKzbHvIRF6GE3gxiqO6AIezr3Mws=">
+                    </div> -->
+                
+            </div>
+        </section>
+
+        <section class="basic-info">
+            <div class="container">
+                <h1 style="text-align: left;"><%= restaurant.r_name %></h1>
+                <p>Chinese, Sandwich, Fast Food, North Indian, Pizza, Desserts, South Indian, Burger</p>
+                <p><%= restaurant.r_address %></p>
+            </div>
+            <div class="container">
+                <span><button type="button" class="btn btn-primary" onclick="checkAuth()">Add Review</button></span>
+                <span><a href="http://google.co.in" target="_blank"><button type="button" class="btn btn-primary">Direction</button></a></span>
+            </div>
+        </section>
+        <section class="order-reviews">
+            <div class="container tablist">
+                <div class="tablist-child overview-tab tab-active">Overview</div> 
+                <div class="tablist-child order-tab">Order</div> 
+                <div class="tablist-child review-tab">Reviews</div>
+            </div>
+        </section>
+
+        <section class="dishes" style="margin-top:30px">
+            <div style="display: flex; flex-direction: row;" class="container overview">
+                <div style="width: 65%;" class="details">
+                    <div style="margin-bottom: 10px; display: flex; flex-direction: row" class="container">
+                        <div class="card-horizontal" style="height: auto; box-sizing: border-box; display: flex; flex: 1 1 auto;  border-style: none;">
+                            <div class="img-square-wrapper" style="box-sizing: border-box;">
+                              <img style="border-radius: 5px; height: 60px; width: 60px; line-height: 100%; outline: none; text-decoration: none; display: block; box-sizing: border-box; border-style: none; border-width: 0;" class="" src="../images/handwash.png" alt="Card image cap">
+                            </div>
+                            <div class="card-body-restaurant" style="box-sizing: border-box; padding: 5px 5px;">
+                              <p style="text-transform: capitalize; line-height: 24px; font-size: 12px; width: 100%; box-sizing: border-box; margin: 0;" class="card-text" align="left">RESTAURANT SAFETY MEASURE</p>
+                              <p style="text-transform: capitalize; line-height: 24px; font-size: 12px; width: 100%; box-sizing: border-box; margin: 0 0 var(--bs-card-title-spacer-y);" class="card-title" align="left"><strong style="box-sizing: border-box; font-weight: bolder;">Rider Hand Wash</strong></p>
+                            </div>
+                        </div>
+                        <div class="card-horizontal" style="height: auto; box-sizing: border-box; display: flex; flex: 1 1 auto; border-style: none;">
+                            <div class="img-square-wrapper" style="box-sizing: border-box;">
+                              <img style="border-radius: 5px; height: 60px; width: 60px; line-height: 100%; outline: none; text-decoration: none; display: block; box-sizing: border-box; border-style: none; border-width: 0;" class="" src="../images/tempcheck.png" alt="Card image cap">
+                            </div>
+                            <div class="card-body-restaurant" style="box-sizing: border-box; padding: 5px 10px;">
+                              <p style="text-transform: capitalize; line-height: 24px; font-size: 12px; width: 100%; box-sizing: border-box; margin: 0;" class="card-text" align="left">RESTAURANT SAFETY MEASURE</p>
+                              <p style="text-transform: capitalize; line-height: 24px; font-size: 12px; width: 100%; box-sizing: border-box; margin: 0 0 var(--bs-card-title-spacer-y);" class="card-title" align="left"><strong style="box-sizing: border-box; font-weight: bolder;">Daily Temp. Checks</strong></p>
+                            </div>
+                        </div>
+                    </div>                    
+                    <div class="container mt-5">
+                        <p class="font-weight-bold">Timings</p>
+                        <p>8am - 11pm</p>
+                    </div>
+                    <div class="container mt-5">
+                        <p class="font-weight-bold">People Say This Place Is Known For</p>
+                        <p>Menu Options, Courteous Staff, Good Quality Food, Perfect Place, Nice Ambience, Awesome Food</p>
+                    </div>
+                    <div class="container mt-5">
+                        <p class="font-weight-bold">Average Cost</p>
+                        <p>₹750 for two people (approx.)</p>
+                        <p>Cash and Cards accepted</p>
+                        <p>Digital payments accepted</p>
+                    </div>
+                </div>
+                <div style="width: 35%; border: 1px solid; padding: 20px; ">
+                    <div>
+                        <p class="font-weight-bold">Call</p>
+                        <p>+91-88888xxxxx</p>
+                    </div>
+                    <p class="font-weight-bold">Direction</p>
+                    <div style="height: 300px; margin: 10px" id="map"></div>
+                    <div style="margin-top:20px; margin-bottom:20px">
+                        <%= restaurant.r_address %>
+                    </div>
+                    <span><button type="button" class="btn btn-primary">Direction</button></span>
+                </div>
+            </div>
+            <div class="container overview-dishes-reviews">
+
+            </div>
+        </section>
+    </div>
+    <div id="pageMessages">
+
+    </div>
+    <footer class="text-center text-white mt-3" style="background-color: #f1f1f1;">
+        <!-- Grid container -->
+        <div class="container pt-4">
+            <!-- Section: Social media -->
+            <section class="mb-4">
+                <!-- Facebook -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-facebook-f"></i></a>
+    
+                <!-- Twitter -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-twitter"></i></a>
+    
+                <!-- Google -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-google"></i></a>
+    
+                <!-- Instagram -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-instagram"></i></a>
+    
+                <!-- Linkedin -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-linkedin"></i></a>
+                <!-- Github -->
+                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-github"></i></a>
+            </section>
+            <!-- Section: Social media -->
+        </div>
+        <!-- Grid container -->
+    
+        <!-- Copyright -->
+        <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2022 Copyright:
+            <a class="text-dark" href="https://suyashgautam.me/">Suyash Gautam</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/all.min.js"></script>
+    <script src="../js/autoComplete.js"></script>
+    <script src="../js/searchRestaurant.js"></script>
+    <script>
+        function createAlert(title, summary, details, severity, dismissible, autoDismiss, appendToId) {
+            var iconMap = {
+                info: "fa fa-info-circle",
+                success: "fa fa-thumbs-up",
+                warning: "fa fa-exclamation-triangle",
+                danger: "fa ffa fa-exclamation-circle"
+            };
+
+            var iconAdded = false;
+
+            var alertClasses = ["alert", "animated", "flipInX"];
+            alertClasses.push("alert-" + severity.toLowerCase());
+
+            if (dismissible) {
+                alertClasses.push("alert-dismissible");
+            }
+
+            var msgIcon = $("<i />", {
+                "class": iconMap[severity] // you need to quote "class" since it's a reserved keyword
+            });
+
+            var msg = $("<div />", {
+                "class": alertClasses.join(" ") // you need to quote "class" since it's a reserved keyword
+            });
+
+            if (title) {
+                var msgTitle = $("<h4 />", {
+                html: title
+                }).appendTo(msg);
+                
+                if(!iconAdded){
+                msgTitle.prepend(msgIcon);
+                iconAdded = true;
+                }
+            }
+
+            if (summary) {
+                var msgSummary = $("<strong />", {
+                html: summary
+                }).appendTo(msg);
+                
+                if(!iconAdded){
+                msgSummary.prepend(msgIcon);
+                iconAdded = true;
+                }
+            }
+
+            if (details) {
+                var msgDetails = $("<p />", {
+                html: details
+                }).appendTo(msg);
+                
+                if(!iconAdded){
+                msgDetails.prepend(msgIcon);
+                iconAdded = true;
+                }
+            }
+
+
+            if (dismissible) {
+                var msgClose = $("<span />", {
+                "class": "close", // you need to quote "class" since it's a reserved keyword
+                "data-dismiss": "alert",
+                html: "<i class='fa fa-times-circle'></i>"
+                }).appendTo(msg);
+            }
+
+            $('#' + appendToId).prepend(msg);
+
+            if(autoDismiss){
+                setTimeout(function(){
+                msg.addClass("flipOutX");
+                setTimeout(function(){
+                    msg.remove();
+                },1000);
+                }, 5000);
+            }
+        }
+        const postRestReview = () => {
+            const rate = document.querySelector('.rest-rate')
+            if(rate.querySelector('input[name = rate]:checked') == undefined)
+            {
+                return createAlert('Opps!','Kindly select the number of stars you would want to give!','','danger',true,false,'pageMessages');
+                //return alert('Kindly select the number of stars you would want to give!');
+            }
+            const stars = rate.querySelector('input[name = rate]:checked');
+            const review = document.querySelector('textarea[name = review]');
+            const data = {
+                stars: stars.value,
+                review: review.value.trim(),
+                type: "restaurant"
+            }
+            console.log(data);
+            fetch(`${window.location.href}`, {method: "POST", body: JSON.stringify(data),
+            headers: {
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            }}).then(response => response.json()).then(response => {
+                stars.checked = false;
+                review.value = '';
+                if(response.message == 'Success'){
+                    return createAlert('','Success!','Thank You for giving you review!','success',true,true,'pageMessages');
+                }
+                return createAlert('Opps!','Something went wrong! Please try again later.','','danger',true,false,'pageMessages');
+            })
+        }
+
+        const postDishReview = () => {
+            const rate = document.querySelector('.dish-rate')
+            if(rate.querySelector('input[name = rate]:checked') == undefined)
+            {
+                return createAlert('Opps!','Kindly select the number of stars you would want to give!','','danger',true,false,'pageMessages');
+                //return alert('Kindly select the number of stars you would want to give!');
+            }
+            const stars = rate.querySelector('input[name = rate]:checked');
+            const d_name = document.querySelector('#dish-review-list');
+            const data = {
+                stars: stars.value,
+                d_name: d_name.value,
+            }
+            fetch(`${window.location.href}`, {method: "POST", body: JSON.stringify(data),
+            headers: {
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            }}).then(response => response.json()).then(response => {
+                stars.checked = false;
+                if(response.message == 'Success'){
+                    return createAlert('','Success!','Thank You for giving you review!','success',true,true,'pageMessages');
+                    // return alert('Thank You for giving you review!');
+                }
+                return createAlert('Opps!','Something went wrong! Please try again later.','','danger',true,false,'pageMessages');
+                // return alert('Some error occured. Please try again later');
+            })
+        }
+    </script>
+    <script>
+        var restLat = parseFloat('<%= restaurant.r_latitude %>');
+        var restLong = parseFloat('<%= restaurant.r_longitude %>');
+        console.log(restLat, restLong);
+        var map;
+        if(isNaN(restLat) == false && isNaN(restLong) == false)
+        {    
+            map = L.map('map', { zoomControl: false, scrollWheelZoom: false}).setView([restLat, restLong], 14);
+            var marker = L.marker([restLat, restLong]).bindPopup('<%= restaurant.r_name %>').addTo(map).openPopup();
+        }
+        else {
+            map = L.map('map', { zoomControl: false, scrollWheelZoom: false}).setView([20.5937, 78.9629], 8);
+        }
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+    </script>

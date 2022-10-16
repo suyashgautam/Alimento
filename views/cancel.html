@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Checkout canceled</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="modal" id="fail" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content" style="border:none;border-radius: 5px;">
+        <div class="modal-header" style="    background: #d75a4a;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;">
+          <button type="button" class="close" data-dismiss="modal" style="opacity:1;color:#fff;">&times;</button>
+          <h4 class="modal-title text-center"><img src="https://lh3.googleusercontent.com/-ApBj8d4WL1E/Wp0fJeAD6jI/AAAAAAAAD4M/Dh6l_UiA64kln8PS-1SaDQFuhb9KJL40gCL0BGAYYCw/h100/2018-03-05.png" alt=""></h4>
+        </div>
+        <div class="modal-body">
+          <p style="text-align:center;color:#d75a4a;font-size:24px;font-weight:500;">Sorry! your payment failed!</p>
+          <p style="color:#555555;"><br>If your payment got detucted for the transaction, the same shall be credited back to your account in<strong style="font-weight:500;font-size:15px;color: #222222;"> 5 working days</strong></p>
+          <div class="text-center">
+            <a href="http://localhost:3000"><button class="btn btn-primary">Back to Home</button></a>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script>
+    $("#fail").modal({ show : true });
+    $("#fail").modal({
+    backdrop : "static",
+    keyboard: false
+});
+  </script>
+</body>
+</html>

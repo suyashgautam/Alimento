@@ -1,0 +1,136 @@
+<%- include('../partials/customerHeader.ejs', {title: "Order Details"}) %>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+<link rel="stylesheet" href="../css/autoComplete.css">
+<style>
+    .task-count {
+    /* width: 200px; */
+    padding: 0px 5px;
+    height: 40px;
+    background: #27aa80;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 5%;
+    color: #333333;
+    font-weight: 600;
+    font-size: 12px;
+    transition: all .2s ease;
+  }
+</style>
+<div style="max-width: 600px;" class="container text-center border rounded bg-light my-5 ml-auto">
+    <h3>Order Id: <%= data[0].o_id %></h3>
+    <a style="font-size: 14px;" href="../Customer/invoices/<%= data[0].o_id %>.pdf" target="_blank">Download Invoice</a>
+    <div class="card-horizontal mt-5">
+        <div class="img-square-wrapper">
+            <img style = "border-radius: 5px; height: 80px; width: 80px;" class="" src="<%= (data[0].r_image != '' && data[0].r_image != null) ? '../' + data[0].r_image : '../image-not-available.jpg' %>" alt="Card image cap">
+        </div>
+        <div class="card-body-restaurant">
+            <p style="text-transform: capitalize" class="card-title"><strong><%= data[0].r_name %></strong></p>
+            <p style="text-transform: capitalize" class="card-text"><%= data[0].r_address %></p>
+        </div>
+    </div>
+    <div class='card col-md-12 m-auto'>
+        <div style = "display: flex; flex-direction: row; justify-content: space-between;" class='card-title my-auto py-2'>
+            <h5 style="margin-top: auto;">
+                Status
+            </h5>
+            <div class='task-count' style="background-color: '#27aa80'">
+                <%= data[0].o_status %>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 mx-auto">
+        <table class="table" style="font-size: 14px">
+            <thead class="text-center">
+                <tr>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Item Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+            </tbody>
+        </table>
+    </div>
+    <div id="mapid" style="width: auto; height: 400px; margin-bottom: 10px;"></div>
+</div>
+
+
+
+<script>
+    let data = '<%- JSON.stringify(data) %>';
+    data = JSON.parse(data);
+    const tbody = document.querySelector('tbody');
+    let tb = ``;
+    let gtotal = 0;
+    data.forEach(element => {
+        tb += `<tr>
+                    <td style="text-transform: capitalize">${element.d_name}</td>
+                    <td>&#x20b9 ${element.o_payment / element.d_quantity}</td>
+                    <td>x ${element.d_quantity}</td>
+                    <td>&#x20b9 ${element.o_payment}</td>
+               </tr>`
+        gtotal = gtotal + element.o_payment;
+    });
+    tb += `<tr>
+                <th>Grand Total</th>
+                <td></td>
+                <td></td>
+                <th>&#x20b9 ${gtotal}</th>
+            </tr>`;
+    tbody.innerHTML = tb;
+
+    var mymap = L.map('mapid').setView([20.5937, 78.9629], 10);
+
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1
+    }).addTo(mymap);
+
+    var custName = '<%= data[0].c_name %>';
+    var restName = '<%= data[0].r_name %>';
+    restName = (restName).replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
+    var custLat = parseFloat('<%= data[0].c_latitude %>');
+    var custLong = parseFloat('<%= data[0].c_longitude %>');
+    var restLat = parseFloat('<%= data[0].r_latitude %>');
+    var restLong = parseFloat('<%= data[0].r_longitude %>');
+    console.log(custName, restName, restLat, restLong, custLat, custLong);
+
+    console.log(isNaN(restLat));
+    if(isNaN(restLat) == false && isNaN(restLong) == false) {
+        L.Routing.control({
+            waypoints:   [
+            L.latLng(custLat, custLong),
+            L.latLng(restLat, restLong)
+            ],     
+            draggableWaypoints: false,
+            routeWhileDragging: false,
+            show: false
+        }).addTo(mymap);
+        var m1 = L.marker([restLat, restLong]).addTo(mymap);
+        var p1 = new L.Popup({ autoClose: false, closeOnClick: false })
+                        .setContent(restName)
+                        .setLatLng([restLat, restLong]); 
+        m1.bindPopup(p1).openPopup();
+    }
+
+    var m2 = L.marker([custLat, custLong]).addTo(mymap);
+    var p2 = new L.Popup({ autoClose: false, closeOnClick: false })
+                    .setContent(custName)
+                    .setLatLng([custLat, custLong]); 
+    m2.bindPopup(p2).openPopup();
+
+</script>
+
+<%- include('../partials/customerFooter.ejs') %>
