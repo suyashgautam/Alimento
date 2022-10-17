@@ -1,4 +1,4 @@
-Alimento is a food ordering app which allows users to order food from their favourite restaurant and allows restaurant to manage the order status right from order confirmation to delievery of order.
+Alimento is a food ordering app that allows users to order food from their favorite restaurant. Restaurants can manage the order status right from order confirmation to delivery of the order.
 
 ## Alimento allow 2 types of user.
 1. Customer
