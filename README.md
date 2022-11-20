@@ -1,5 +1,8 @@
 Alimento is a food ordering app that allows users to order food from their favorite restaurant. Restaurants can manage the order status right from order confirmation to delivery of the order.
 
+# Project Link
+https://alimento.gq/
+
 ## To understand the features and flow please watch the videos.
 ### Overview : https://youtu.be/iclhxpiSzyM
 ### Demo: https://youtu.be/_fejN9NnDWY
