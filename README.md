@@ -5,7 +5,7 @@ https://alimento.gq/
 
 ## To understand the features and flow please watch the videos.
 ### Overview : https://youtu.be/iclhxpiSzyM
-### Demo: https://youtu.be/_fejN9NnDWY
+### Demo: https://youtu.be/gCfgs2zK_Xs
 
 ## Alimento allow 2 types of user.
 1. Customer
